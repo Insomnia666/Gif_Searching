@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Gif_Searching</string>
+    <string name="toolbar_title">Trending Gifs</string>
+    <string name="search_view_hint">Type category</string>
+    <string name="action_search">Search</string>
+    <string name="action_sort_by_rating_y">Sort by rating y</string>
+    <string name="action_sort_by_rating_g">Sort by rating g</string>
+    <string name="action_sort_by_rating_pg">Sort by rating pg</string>
+    <string name="action_show_all_gifs">Show all gifs</string>
 </resources>

@@ -2,8 +2,9 @@ package com.dimon.gif_searching.presentation;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -20,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 public class GifDialog extends DialogFragment {
     public String url;
 
-    static GifDialog newInstance(String url) {
+    public static GifDialog newInstance(String url) {
         GifDialog gifDialog = new GifDialog();
         Bundle args = new Bundle();
         args.putString("url", url);

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/actionRatingY"
+        android:title="@string/action_sort_by_rating_y"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/actionRatingG"
+        android:title="@string/action_sort_by_rating_g"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/actionRatingPG"
+        android:title="@string/action_sort_by_rating_pg"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/actionRatingAll"
+        android:title="@string/action_show_all_gifs"
+        app:showAsAction="never" />
+</menu>

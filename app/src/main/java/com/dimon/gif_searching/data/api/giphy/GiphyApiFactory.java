@@ -1,4 +1,4 @@
-package com.dimon.gif_searching.data.api;
+package com.dimon.gif_searching.data.api.giphy;
 
 import com.dimon.gif_searching.BuildConfig;
 
