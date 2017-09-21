@@ -1,10 +1,10 @@
 package com.dimon.gif_searching.presentation.activity;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -14,9 +14,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.dimon.gif_searching.R;
-import com.dimon.gif_searching.data.api.giphy.GiphyApiFactory;
 import com.dimon.gif_searching.data.content.Gif;
-import com.dimon.gif_searching.data.giphy.Data;
+import com.dimon.gif_searching.domain.GifListUseCase;
 import com.dimon.gif_searching.presentation.GifDialog;
 import com.dimon.gif_searching.presentation.adapter.OnGifClickListener;
 import com.dimon.gif_searching.presentation.adapter.RecyclerViewAdapter;
@@ -24,15 +23,15 @@ import com.dimon.gif_searching.presentation.adapter.RecyclerViewAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import io.reactivex.observers.DisposableObserver;
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, OnGifClickListener {
 
     private RecyclerView recyclerViewTrending;
     private RecyclerViewAdapter recyclerViewAdapter;
     private List<Gif> gifsList;
+    private GifListUseCase gifListUseCase = new GifListUseCase();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,23 +64,30 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     private void queryGifs() {
-        GiphyApiFactory.getInstance().getTrending().enqueue(new Callback<Data>() {
+
+        gifListUseCase.execute(null, new DisposableObserver<List<Gif>>() {
             @Override
-            public void onResponse(Call<Data> call, Response<Data> response) {
-                Integer countOfGifs = Integer.parseInt(response.body().getPagination().getCount().toString());
-                for (int i = 0; i < countOfGifs; i++) {
-                    String url = response.body().getData().get(i).getImages().getFixedHeightSmall().getUrl();
-                    String originalUrl = response.body().getData().get(i).getImages().getFixedHeight().getUrl();
-                    gifsList.add(new Gif(url, originalUrl));
-                    recyclerViewAdapter.notifyDataSetChanged();
-                }
+            public void onNext(List<Gif> gifs) {
+                gifsList.addAll(gifs);
+                recyclerViewAdapter.notifyDataSetChanged();
             }
 
             @Override
-            public void onFailure(Call<Data> call, Throwable t) {
-                Log.e("myLogs", t.getMessage());
+            public void onError(Throwable e) {
+                Log.e("AAAAAAAAAAAAAA", e.getMessage());
+            }
+
+            @Override
+            public void onComplete() {
+
             }
         });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        gifListUseCase.dispose();
     }
 
     @Override

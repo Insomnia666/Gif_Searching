@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.dimon.gif_searching.R;
 
@@ -15,10 +16,13 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder {
 
     ImageView imageGif;
     FrameLayout containerImageGif;
+    ProgressBar progressBar;
 
     public RecyclerViewHolder (View itemView) {
         super(itemView);
         imageGif = (ImageView) itemView.findViewById(R.id.imageGif);
         containerImageGif = (FrameLayout) itemView.findViewById(R.id.containerImageGif);
+        progressBar = (ProgressBar) itemView.findViewById(R.id.progress);
+
     }
 }

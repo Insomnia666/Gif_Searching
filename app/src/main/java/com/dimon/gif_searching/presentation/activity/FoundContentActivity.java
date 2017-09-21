@@ -11,9 +11,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.dimon.gif_searching.R;
-import com.dimon.gif_searching.data.api.giphy.GiphyApiFactory;
 import com.dimon.gif_searching.data.content.Gif;
 import com.dimon.gif_searching.data.giphy.Data;
+import com.dimon.gif_searching.domain.TagGifListUseCase;
 import com.dimon.gif_searching.presentation.GifDialog;
 import com.dimon.gif_searching.presentation.adapter.OnGifClickListener;
 import com.dimon.gif_searching.presentation.adapter.RecyclerViewAdapter;
@@ -21,9 +21,7 @@ import com.dimon.gif_searching.presentation.adapter.RecyclerViewAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import io.reactivex.observers.DisposableObserver;
 
 /**
  * Created by dimon on 20.09.2017.
@@ -35,6 +33,7 @@ public class FoundContentActivity extends AppCompatActivity implements OnGifClic
     private RecyclerViewAdapter recyclerViewAdapter;
     private List<Gif> gifsList;
     private String query;
+    private TagGifListUseCase tagGifListUseCase = new TagGifListUseCase();
     private Data queryResponse;
 
     @Override
@@ -81,36 +80,29 @@ public class FoundContentActivity extends AppCompatActivity implements OnGifClic
     }
 
     private void queryGifs(String title) {
-        GiphyApiFactory.getInstance().getFoundResult(query, "en").enqueue(new Callback<Data>() {
+        tagGifListUseCase.execute(title, new DisposableObserver<List<Gif>>() {
             @Override
-            public void onResponse(Call<Data> call, Response<Data> response) {
-                queryResponse = response.body();
-                showGifsWithRating("all");
+            public void onNext(List<Gif> gifs) {
+                gifsList.addAll(gifs);
+                recyclerViewAdapter.notifyDataSetChanged();
             }
 
             @Override
-            public void onFailure(Call<Data> call, Throwable t) {
-                Log.e("myLogs", t.getMessage());
+            public void onError(Throwable e) {
+                Log.e("AAAAAAAAAAAAAA", e.getMessage());
+            }
+
+            @Override
+            public void onComplete() {
+
             }
         });
     }
 
-    private void showGifsWithRating(String rating) {
-        gifsList.clear();
-        Integer countOfGifs = Integer.parseInt(queryResponse.getPagination().getCount().toString());
-        for (int i = 0; i < countOfGifs; i++) {
-            if (rating.equals("all")) {
-                String url = queryResponse.getData().get(i).getImages().getFixedHeightSmall().getUrl();
-                String bigSizeGifUrl = queryResponse.getData().get(i).getImages().getFixedHeight().getUrl();
-                gifsList.add(new Gif(url, bigSizeGifUrl));
-                recyclerViewAdapter.notifyDataSetChanged();
-            } else if (queryResponse.getData().get(i).getRating().equals(rating)) {
-                String url = queryResponse.getData().get(i).getImages().getFixedHeightSmall().getUrl();
-                String bigSizeGifUrl = queryResponse.getData().get(i).getImages().getFixedHeight().getUrl();
-                gifsList.add(new Gif(url, bigSizeGifUrl));
-                recyclerViewAdapter.notifyDataSetChanged();
-            }
-        }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        tagGifListUseCase.dispose();
     }
 
     @Override
@@ -119,24 +111,6 @@ public class FoundContentActivity extends AppCompatActivity implements OnGifClic
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.actionRatingY:
-                showGifsWithRating("y");
-                break;
-            case R.id.actionRatingG:
-                showGifsWithRating("g");
-                break;
-            case R.id.actionRatingPG:
-                showGifsWithRating("pg");
-                break;
-            case R.id.actionRatingAll:
-                showGifsWithRating("all");
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     public boolean onSupportNavigateUp() {
