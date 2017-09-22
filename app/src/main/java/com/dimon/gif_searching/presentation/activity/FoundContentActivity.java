@@ -8,7 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
 
 import com.dimon.gif_searching.R;
 import com.dimon.gif_searching.data.content.Gif;
